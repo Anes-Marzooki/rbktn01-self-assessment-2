@@ -17,6 +17,8 @@
   *   var leaf5 = branch2.addChild(5);
   *   var leaf6 = branch3.addChild(6);
   *   var leaf7 = branch3.addChild(7);
+
+
   *   var newTree = root1.map(function (value) {
   *     return value * 2;
   *   })
@@ -34,4 +36,41 @@ var Tree = function(value) {
 };
 
 
+Tree.prototype.map = function(callback) {
+  //retrieve the array of the original tree:
+  var array = this.children;
 
+  //get the new tree's value:
+  var mapValue = callback( this.value );
+
+  //create a new tree:
+  var mapTree = new Tree( mapValue );
+  mapTree.children = this.children;
+
+  //iterate func
+  function itr( array ) {
+    
+    array.forEach( function( element, index ) {
+    //iterate over children
+      //if children[i] is !array
+      if( !Array.isArray( element ) ) {
+        //grab the element
+        var grab = element;
+        //pass it to the callback function and push the result to the new tree:
+        mapTree[array][index] = callback( grab ) ;
+        return array.splice( index, 1 );
+
+        // return mapTree.addChild( callback( grab ) );
+
+      }else if ( Array.isArray( element ) ) {
+      //else if children is array
+        //iterate  
+        return itr( element );
+      }
+    } );
+
+  }
+
+  itr(array);
+  return mapTree;
+}
